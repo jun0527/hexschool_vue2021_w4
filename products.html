@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理頁面</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="wrap" id="app">
+    <h1 class="titleL">商品管理</h1>
+    <button type="button" class="showAddProductBtn" @click="showAddProduct('addData')">建立新商品</button>
+    <product-modal-area :products="products" :prompt="prompt" :temp-data="tempData" :show-status="showStatus"
+      @close-modal="closeAddProduct" @add-data=addDataValidate @edit-data=addDataValidate>
+    </product-modal-area>
+    <table class="productListArea">
+      <thead>
+        <tr>
+          <th width="25%">商品名稱</th>
+          <th width="15%">商品分類</th>
+          <th width="15%">原價</th>
+          <th width="15%">售價</th>
+          <th width="15%">是否啟用</th>
+          <th width="15%">編輯</th>
+        </tr>
+      </thead>
+      <tbody class="productList">
+        <tr v-for="(item,index) in products" :key="item.id">
+          <td>{{item.title}}</td>
+          <td>{{item.category}}</td>
+          <td>{{item.origin_price}}</td>
+          <td>{{item.price}}</td>
+          <td>
+            <input type="checkbox" class="checkbox" :id="item.id" @change="changeEnabled(item.id,index)"
+              :checked="products[index].is_enabled===1?true:false">
+            <label :for="item.id" class="btnWrap">
+              <span class="btnInside"></span>
+            </label>
+            <span class="isEnabled">{{products[index].is_enabled===1?"啟用":"未啟用"}}</span>
+          </td>
+          <td><button type="button" class="editBtn" @click="showAddProduct('editData',item.id,index)">編輯</button><button
+              type="button" class="deleteBtn" @click="deleteProduct(item.id)">刪除</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination class="d-flex justify-content-center" :page="page" @emit-init="init"></pagination>
+  </div>
+
+  <script src="https://unpkg.com/vue@next"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+  <script type="module" src="js/all.js"></script>
+</body>
+
+</html>
