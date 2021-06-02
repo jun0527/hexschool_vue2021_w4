@@ -1,15 +1,16 @@
-let myModal = {};
+let addProductModal = {};
+let deleteModal = {};
 import pagination from "./pagination.js";
 const productModalArea = {
   props: ["products", "prompt", "tempData", "showStatus"],
   mounted() {
     const modal = document.querySelector(".productModal");
-    myModal = new bootstrap.Modal(modal);
+    addProductModal = new bootstrap.Modal(modal);
   },
   methods: {
     closeModal() {
       console.log("closeModal");
-      this.$emit("close-modal")
+      this.$emit("close-modal", "addProductModal")
     },
     addData() {
       console.log("addData");
@@ -90,6 +91,40 @@ const productModalArea = {
     </div>
   </div>`
 }
+const deleteModalArea = {
+  props: ["deleteId"],
+  methods: {
+    closeModal() {
+      console.log("close");
+      this.$emit("close-modal", 'deleteModal')
+    },
+    deleteData(id) {
+      console.log("delete", id, this.deleteId);
+      this.$emit("delete-data", id)
+    }
+  },
+  mounted() {
+    const modal = document.querySelector(".deleteModal");
+    deleteModal = new bootstrap.Modal(modal);
+  },
+  template: `<div class="modal deleteModal" id="exampleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="exampleModalLabel">刪除確認</h5>
+        <button type="button" class="btn-close btn-close-white" @click="closeModal('deleteModal')"></button>
+      </div>
+      <div class="modal-body">
+        <p class="my-2">商品刪除後將無法復原，確定要刪除商品？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click="closeModal('deleteModal')">取消</button>
+        <button type="button" class="btn btn-danger" @click="deleteData(deleteId)">刪除</button>
+      </div>
+    </div>
+  </div>
+</div>`
+}
 const app = {
   data() {
     return {
@@ -166,12 +201,16 @@ const app = {
         addData: true,
         editData: false
       },
-      editId: ""
+      id: {
+        editId: "",
+        deleteId: ""
+      }
     }
   },
   components: {
     pagination,
-    productModalArea
+    productModalArea,
+    deleteModalArea
   },
   methods: {
     init(page = 1) {
@@ -188,22 +227,32 @@ const app = {
         })
     },
     //互動視窗
-    showAddProduct(status, id, index) {
+    showModal(modal, status, id, index) {
       this.modalStatus = status;
       if (status === "editData") {
         this.showStatus.addData = false;
         this.showStatus.editData = false;
-        this.editId = id;
+        this.id.editId = id;
         this.tempData = { ...this.products[index] };
-      } else {
+      } else if (status === "addData") {
         this.showStatus.editData = false;
         this.showStatus.addData = true;
+      } else {
+        this.id.deleteId = id;
       }
-      myModal.show();
+      if (status === "deleteData") {
+        deleteModal.show();
+      } else {
+        addProductModal.show();
+      }
     },
-    closeAddProduct() {
+    closeModal(modal) {
       this.clearArrayData("tempData");
-      myModal.hide();
+      if (modal === "addProductModal") {
+        addProductModal.hide();
+      } else {
+        deleteModal.hide();
+      }
     },
     addDataValidate(status, id) {
       console.log(status, id);
@@ -243,7 +292,7 @@ const app = {
         .then((res) => {
           if (res.data.success) {
             alert("商品建立成功！");
-            this.closeAddProduct();
+            this.closeModal('addProductModal');
             this.init();
           } else {
             console.log(res.data);
@@ -264,7 +313,7 @@ const app = {
         .then((res) => {
           if (res.data.success) {
             alert("修改商品資料成功！");
-            this.closeAddProduct();
+            this.closeModal('addProductModal');
             this.init();
           } else {
             alert("修改商品資料失敗！");
@@ -311,13 +360,17 @@ const app = {
         })
     },
     deleteProduct(id) {
+      console.log(id);
       axios.delete(`${this.url}api/${this.path}/admin/product/${id}`)
         .then((res) => {
           if (res.data.success) {
             alert("產品刪除成功！");
+            deleteModal.hide();
             this.init();
           } else {
+            console.log(res);
             alert("產品刪除失敗！");
+            deleteModal.hide();
           }
         })
         .catch((err) => {

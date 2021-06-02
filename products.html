@@ -12,9 +12,9 @@
 <body>
   <div class="wrap" id="app">
     <h1 class="titleL">商品管理</h1>
-    <button type="button" class="showAddProductBtn" @click="showAddProduct('addData')">建立新商品</button>
+    <button type="button" class="showAddProductBtn" @click="showModal('addProductModal','addData')">建立新商品</button>
     <product-modal-area :products="products" :prompt="prompt" :temp-data="tempData" :show-status="showStatus"
-      @close-modal="closeAddProduct" @add-data=addDataValidate @edit-data=addDataValidate>
+      @close-modal="closeModal('addProductModal')" @add-data=addDataValidate @edit-data=addDataValidate>
     </product-modal-area>
     <table class="productListArea">
       <thead>
@@ -41,11 +41,14 @@
             </label>
             <span class="isEnabled">{{products[index].is_enabled===1?"啟用":"未啟用"}}</span>
           </td>
-          <td><button type="button" class="editBtn" @click="showAddProduct('editData',item.id,index)">編輯</button><button
-              type="button" class="deleteBtn" @click="deleteProduct(item.id)">刪除</button></td>
+          <td><button type="button" class="editBtn"
+              @click="showModal('addProductModal','editData',item.id,index)">編輯</button><button type="button"
+              class="deleteBtn" @click="showModal('deleteModal', 'deleteData', item.id)">刪除</button></td>
         </tr>
       </tbody>
     </table>
+    <delete-modal-area :delete-id="id.deleteId" @close-modal="closeModal" @delete-data="deleteProduct">
+    </delete-modal-area>
     <pagination class="d-flex justify-content-center" :page="page" @emit-init="init"></pagination>
   </div>
 
