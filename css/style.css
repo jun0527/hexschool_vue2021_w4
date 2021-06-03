@@ -89,7 +89,7 @@ body{
   font-size: 12px;
   margin: 0 5px;
 }
-/* signIn */
+/* index */
 .signIn{
   width: 280px;
   border: 1px solid rgba(0, 0, 0, 0.3);
@@ -111,8 +111,9 @@ body{
 }
 .formGroup button:hover{
   background: #0066CC;
+  color: #fff;
 }
-/* index.html */
+/* products.html */
 .wrap .showAddProductBtn{
   display: block;
   margin: 0 0 0 auto;
@@ -142,6 +143,42 @@ body{
   font-weight: bold;
   text-align: center;
   margin-bottom: 10px;
+}
+.upImgArea{
+  display: flex;
+  justify-content: space-between;
+}
+.formGroup .isUploadImageBtn{
+  width: auto;
+  height: auto;
+  padding: 2px 5px;
+  font-size: 12px;
+  margin: 0 0 2px 10px;
+}
+.formGroup .upImage{
+  border: none;
+  width: auto;
+  cursor: pointer;
+}
+.formGroup .upImageBtn{
+  width: auto;
+  height: auto;
+  font-size: 14px;
+  padding: 5px;
+  background: #0080FF;
+  color: #fff;
+  border: none;
+  margin: 2px;
+}
+.formGroup .upImageBtn:disabled{
+  background: #6c757d;
+  cursor: auto;
+}
+.formGroup .cancelBtn{
+  background: #6c757d;
+}
+.formGroup .cancelBtn:hover{
+  background: #5c636a;
 }
 .formGroup textarea{
   height: 60px;

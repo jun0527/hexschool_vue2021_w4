@@ -2,15 +2,21 @@ let addProductModal = {};
 let deleteModal = {};
 import pagination from "./pagination.js";
 const productModalArea = {
-  props: ["products", "prompt", "tempData", "showStatus"],
+  data() {
+    return {
+      imageFile: ""
+    }
+  },
+  props: ["products", "prompt", "tempData", "showStatus", "isUpImg"],
   mounted() {
     const modal = document.querySelector(".productModal");
-    addProductModal = new bootstrap.Modal(modal);
+    addProductModal = new bootstrap.Modal(modal, { backdrop: 'static', keyboard: false });
   },
   methods: {
     closeModal() {
       console.log("closeModal");
-      this.$emit("close-modal", "addProductModal")
+      this.$emit("close-modal", "addProductModal");
+      this.imageFile = "";
     },
     addData() {
       console.log("addData");
@@ -19,9 +25,29 @@ const productModalArea = {
     editData(editId) {
       console.log("editData", editId);
       this.$emit("edit-data", 'editData', editId)
+    },
+    changeStatus(status, btn) {
+      console.log("changeStatus", this[status]);
+      this.$emit("change-status", status);
+      console.log(this[status]);
+      if (btn === "cancel") {
+        this.imageFile = "";
+        console.log(this.imageFile);
+      }
+    },
+    getFile(e) {
+      this.imageFile = e.target.files[0];
+      console.log(this.imageFile);
+    },
+    uploadImage() {
+      console.log(this.imageFile === "");
+      console.log("uploadImage");
+      this.$emit("upload-image", this.imageFile);
+      this.imageFile = "";
+      console.log(this.imageFile);
     }
   },
-  template: `<div class="modal productModal" tabindex="-1">
+  template: `<div class="modal fade productModal"  tabindex="-1">
     <div class="modal-dialog addProductArea">
       <div class="modal-content">
         <div class="modal-header bg-dark text-white">
@@ -45,8 +71,15 @@ const productModalArea = {
               </select>
             </div>
             <div class="formGroup">
-              <label for="imageUrl">商品圖片<span v-text="prompt.imageUrl"></span></label>
-              <input type="text" id="imageUrl" name="imageUrl" placeholder="請輸入圖片網址" v-model="tempData.imageUrl">
+              <label for="imageUrl">商品圖片<button type="button" class="btn isUploadImageBtn" @click="changeStatus('isUpImg')" v-if="!isUpImg">上傳圖片</button><span v-text="prompt.imageUrl"></span></label>
+              <div class="upImgArea" v-if="isUpImg">
+                <input type="file" class="upImage" id="upImage" @change="getFile">
+                <div class="btnArea">
+                  <button type="button" class="upImageBtn" @click="uploadImage" :disabled="imageFile===''?true:false">上傳圖片</button>
+                  <button type="button" class="upImageBtn cancelBtn" @click="changeStatus('isUpImg','cancel')">取消</button>
+                </div>
+              </div>
+              <input type="text" id="imageUrl" name="imageUrl" placeholder="請輸入圖片網址或上傳圖片" v-model="tempData.imageUrl" :disabled="isUpImg">
             </div>
             <div class="formGroup">
               <label for="description">商品描述<span v-text="prompt.description"></span></label>
@@ -107,7 +140,7 @@ const deleteModalArea = {
     const modal = document.querySelector(".deleteModal");
     deleteModal = new bootstrap.Modal(modal);
   },
-  template: `<div class="modal deleteModal" id="exampleModal" tabindex="-1">
+  template: `<div class="modal fade deleteModal" id="exampleModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-dark text-white">
@@ -204,7 +237,8 @@ const app = {
       id: {
         editId: "",
         deleteId: ""
-      }
+      },
+      isUpImg: false
     }
   },
   components: {
@@ -253,6 +287,25 @@ const app = {
       } else {
         deleteModal.hide();
       }
+    },
+    changeStatus(status) {
+      this[status] = !this[status];
+    },
+    uploadImage(file) {
+      console.log(file);
+      let formData = new FormData();
+      formData.append("file-to-upload", file)
+      axios.post(`${this.url}api/${this.path}/admin/upload`, formData)
+        .then((res) => {
+          if (res.data.success) {
+            console.log(res);
+            this.tempData.imageUrl = res.data.imageUrl;
+            this.isUpImg = false;
+          }
+        })
+        .catch((err) => {
+          console.dir(err);
+        })
     },
     addDataValidate(status, id) {
       console.log(status, id);
@@ -331,6 +384,7 @@ const app = {
       this[arrayName].origin_price = "";
       this[arrayName].price = "";
       this[arrayName].unit = "";
+      this.isUpImg = false;
       if (arrayName === "tempData") {
         this.tempData.is_enabled = "";
       }

@@ -14,7 +14,8 @@
     <h1 class="titleL">商品管理</h1>
     <button type="button" class="showAddProductBtn" @click="showModal('addProductModal','addData')">建立新商品</button>
     <product-modal-area :products="products" :prompt="prompt" :temp-data="tempData" :show-status="showStatus"
-      @close-modal="closeModal('addProductModal')" @add-data=addDataValidate @edit-data=addDataValidate>
+      :is-up-img="isUpImg" @close-modal="closeModal('addProductModal')" @add-data="addDataValidate"
+      @edit-data="addDataValidate" @change-status="changeStatus" @upload-image="uploadImage">
     </product-modal-area>
     <table class="productListArea">
       <thead>
