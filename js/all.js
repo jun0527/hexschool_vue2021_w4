@@ -14,34 +14,25 @@ const productModalArea = {
   },
   methods: {
     closeModal() {
-      console.log("closeModal");
       this.$emit("close-modal", "addProductModal");
       this.imageFile = "";
     },
     addData() {
-      console.log("addData");
       this.$emit("add-data", "addData")
     },
     editData(editId) {
-      console.log("editData", editId);
       this.$emit("edit-data", 'editData', editId)
     },
     changeStatus(status, btn) {
       this.imageFile = "";
-      console.log("changeStatus", this[status]);
       this.$emit("change-status", status);
-      console.log(this[status]);
     },
     getFile(e) {
       this.imageFile = e.target.files[0];
-      console.log(this.imageFile);
     },
     uploadImage() {
-      console.log(this.imageFile === "");
-      console.log("uploadImage");
       this.$emit("upload-image", this.imageFile);
       this.imageFile = "";
-      console.log(this.imageFile);
     }
   },
   template: `<div class="modal fade productModal"  tabindex="-1">
@@ -125,11 +116,9 @@ const deleteModalArea = {
   props: ["deleteId"],
   methods: {
     closeModal() {
-      console.log("close");
       this.$emit("close-modal", 'deleteModal')
     },
     deleteData(id) {
-      console.log("delete", id, this.deleteId);
       this.$emit("delete-data", id)
     }
   },
@@ -245,7 +234,6 @@ const app = {
   },
   methods: {
     init(page = 1) {
-      console.log("init", page);
       axios.get(`${this.url}api/${this.path}/admin/products?page=${page}`)
         .then((res) => {
           if (res.data.success) {
@@ -289,13 +277,11 @@ const app = {
       this[status] = !this[status];
     },
     uploadImage(file) {
-      console.log(file);
       let formData = new FormData();
       formData.append("file-to-upload", file)
       axios.post(`${this.url}api/${this.path}/admin/upload`, formData)
         .then((res) => {
           if (res.data.success) {
-            console.log(res);
             this.tempData.imageUrl = res.data.imageUrl;
             this.isUpImg = false;
           }
@@ -305,7 +291,6 @@ const app = {
         })
     },
     addDataValidate(status, id) {
-      console.log(status, id);
       const addProductFrom = document.querySelector(".addProduct");
       this.clearArrayData("prompt");
       let err = validate(addProductFrom, this.constraints);
@@ -337,7 +322,6 @@ const app = {
       let obj = {
         data: { ...this.tempData }
       }
-      console.log(obj);
       axios.post(`${this.url}api/${this.path}/admin/product`, obj)
         .then((res) => {
           if (res.data.success) {
@@ -345,7 +329,6 @@ const app = {
             this.closeModal('addProductModal');
             this.init();
           } else {
-            console.log(res.data);
             alert("商品建立失敗！");
           }
         })
@@ -354,11 +337,9 @@ const app = {
         })
     },
     editProductData(id) {
-      console.log("editData", id);
       let obj = {
         data: { ...this.tempData }
       }
-      console.log(obj);
       axios.put(`${this.url}api/${this.path}/admin/product/${id}`, obj)
         .then((res) => {
           if (res.data.success) {
@@ -411,7 +392,6 @@ const app = {
         })
     },
     deleteProduct(id) {
-      console.log(id);
       axios.delete(`${this.url}api/${this.path}/admin/product/${id}`)
         .then((res) => {
           if (res.data.success) {
@@ -419,7 +399,6 @@ const app = {
             deleteModal.hide();
             this.init();
           } else {
-            console.log(res);
             alert("產品刪除失敗！");
             deleteModal.hide();
           }
