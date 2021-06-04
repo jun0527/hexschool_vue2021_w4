@@ -27,13 +27,10 @@ const productModalArea = {
       this.$emit("edit-data", 'editData', editId)
     },
     changeStatus(status, btn) {
+      this.imageFile = "";
       console.log("changeStatus", this[status]);
       this.$emit("change-status", status);
       console.log(this[status]);
-      if (btn === "cancel") {
-        this.imageFile = "";
-        console.log(this.imageFile);
-      }
     },
     getFile(e) {
       this.imageFile = e.target.files[0];
@@ -384,9 +381,9 @@ const app = {
       this[arrayName].origin_price = "";
       this[arrayName].price = "";
       this[arrayName].unit = "";
-      this.isUpImg = false;
       if (arrayName === "tempData") {
         this.tempData.is_enabled = "";
+        this.isUpImg = false;
       }
     },
     changeEnabled(id, index) {
