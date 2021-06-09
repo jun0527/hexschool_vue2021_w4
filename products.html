@@ -44,11 +44,12 @@
           </td>
           <td><button type="button" class="editBtn"
               @click="showModal('addProductModal','editData',item.id,index)">編輯</button><button type="button"
-              class="deleteBtn" @click="showModal('deleteModal', 'deleteData', item.id)">刪除</button></td>
+              class="deleteBtn" @click="showModal('deleteModal', 'deleteData', item.id,index)">刪除</button></td>
         </tr>
       </tbody>
     </table>
-    <delete-modal-area :delete-id="id.deleteId" @close-modal="closeModal" @delete-data="deleteProduct">
+    <delete-modal-area :delete-id="id.deleteId" :product-title="deleteProductTitle" @close-modal="closeModal"
+      @delete-data="deleteProduct">
     </delete-modal-area>
     <pagination class="d-flex justify-content-center" :page="page" @emit-init="init"></pagination>
   </div>

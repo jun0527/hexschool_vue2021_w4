@@ -113,7 +113,7 @@ const productModalArea = {
   </div>`
 }
 const deleteModalArea = {
-  props: ["deleteId"],
+  props: ["deleteId", "productTitle"],
   methods: {
     closeModal() {
       this.$emit("close-modal", 'deleteModal')
@@ -134,7 +134,8 @@ const deleteModalArea = {
         <button type="button" class="btn-close btn-close-white" @click="closeModal('deleteModal')"></button>
       </div>
       <div class="modal-body">
-        <p class="my-2">商品刪除後將無法復原，確定要刪除商品？</p>
+        <p class="my-2">確定要刪除{{productTitle}}？</p>
+        <p class="my-2">商品刪除後將無法復原！</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" @click="closeModal('deleteModal')">取消</button>
@@ -224,7 +225,8 @@ const app = {
         editId: "",
         deleteId: ""
       },
-      isUpImg: false
+      isUpImg: false,
+      deleteProductTitle: ""
     }
   },
   components: {
@@ -261,6 +263,7 @@ const app = {
       }
       if (status === "deleteData") {
         deleteModal.show();
+        this.deleteProductTitle = this.products[index].title;
       } else {
         addProductModal.show();
       }
@@ -271,6 +274,7 @@ const app = {
         addProductModal.hide();
       } else {
         deleteModal.hide();
+        this.deleteProductTitle = "";
       }
     },
     changeStatus(status) {
