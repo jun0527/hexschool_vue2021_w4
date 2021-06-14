@@ -1,155 +1,11 @@
-let addProductModal = {};
-let deleteModal = {};
+const url = "https://vue3-course-api.hexschool.io/";
+const path = "jun0527";
 import pagination from "./pagination.js";
-const productModalArea = {
-  data() {
-    return {
-      imageFile: ""
-    }
-  },
-  props: ["products", "prompt", "tempData", "showStatus", "isUpImg"],
-  mounted() {
-    const modal = document.querySelector(".productModal");
-    addProductModal = new bootstrap.Modal(modal, { backdrop: 'static', keyboard: false });
-  },
-  methods: {
-    closeModal() {
-      this.$emit("close-modal", "addProductModal");
-      this.imageFile = "";
-    },
-    addData() {
-      this.$emit("add-data", "addData")
-    },
-    editData(editId) {
-      this.$emit("edit-data", 'editData', editId)
-    },
-    changeStatus(status, btn) {
-      this.imageFile = "";
-      this.$emit("change-status", status);
-    },
-    getFile(e) {
-      this.imageFile = e.target.files[0];
-    },
-    uploadImage() {
-      this.$emit("upload-image", this.imageFile);
-      this.imageFile = "";
-    }
-  },
-  template: `<div class="modal fade productModal"  tabindex="-1">
-    <div class="modal-dialog addProductArea">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title">商品建立</h5>
-          <button type="button" class="btn-close btn-close-white" @click="closeModal"></button>
-        </div>
-        <div class="modal-body d-flex">
-          <form action="index.html" class="addProduct js-addProduct">
-            <div class="formGroup">
-              <label for="title">商品名稱<span v-text="prompt.title"></span></label>
-              <input type="text" id="title" name="title" placeholder="請輸入商品名稱" v-model="tempData.title">
-            </div>
-            <div class="formGroup">
-              <label for="category">商品分類<span v-text="prompt.category"></span></label>
-              <select id="category" name="category" v-model="tempData.category">
-                <option value="" selected disabled>請選擇分類</option>
-                <option value="蛋糕">蛋糕</option>
-                <option value="餅乾">餅乾</option>
-                <option value="泡芙">泡芙</option>
-                <option value="其他">其他</option>
-              </select>
-            </div>
-            <div class="formGroup">
-              <label for="imageUrl">商品圖片<button type="button" class="btn isUploadImageBtn" @click="changeStatus('isUpImg')" v-if="!isUpImg">上傳圖片</button><span v-text="prompt.imageUrl"></span></label>
-              <div class="upImgArea" v-if="isUpImg">
-                <input type="file" class="upImage" id="upImage" @change="getFile">
-                <div class="btnArea">
-                  <button type="button" class="upImageBtn" @click="uploadImage" :disabled="imageFile===''?true:false">上傳圖片</button>
-                  <button type="button" class="upImageBtn cancelBtn" @click="changeStatus('isUpImg','cancel')">取消</button>
-                </div>
-              </div>
-              <input type="text" id="imageUrl" name="imageUrl" placeholder="請輸入圖片網址或上傳圖片" v-model="tempData.imageUrl" :disabled="isUpImg">
-            </div>
-            <div class="formGroup">
-              <label for="description">商品描述<span v-text="prompt.description"></span></label>
-              <textarea type="text" id="description" name="description" placeholder="請輸入商品描述"
-                v-model="tempData.description"></textarea>
-            </div>
-            <div class="priceArea">
-              <div class="formGroup">
-                <label for="origin_price">原價<span v-text="prompt.origin_price"></span></label>
-                <input type="text" id="origin_price" name="origin_price" placeholder="請輸入原價"
-                  v-model.number="tempData.origin_price">
-              </div>
-              <div class="formGroup">
-                <label for="price">售價<span v-text="prompt.price"></span></label>
-                <input type="text" id="price" name="price" placeholder="請輸入售價" v-model.number="tempData.price">
-              </div>
-              <div class="formGroup">
-                <label for="unit">單位<span v-text="prompt.unit"></span></label>
-                <input type="text" id="unit" name="unit" placeholder="請輸入單位(如：個)" v-model="tempData.unit">
-              </div>
-            </div>
-            <div class="formGroup" v-if="showStatus.addData">
-              <input type="checkbox" id="is_enabled" name="is_enabled" value="1" v-model="tempData.is_enabled">
-              <label for="is_enabled">是否啟用</label>
-            </div>
-          </form>
-          <div class="previewPictureArea">
-            <h2 class="title">圖片預覽</h2>
-            <div class="previewPicture">
-              <img :src="tempData.imageUrl" alt="圖片預覽">
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">取消</button>
-          <button type="button" class="btn btn-primary" v-if="showStatus.addData"
-            @click="addData">建立</button>
-          <button type="button" class="btn btn-primary" v-else="showStatus.addData"
-            @click="editData(tempData.id)">編輯</button>
-        </div>
-      </div>
-    </div>
-  </div>`
-}
-const deleteModalArea = {
-  props: ["deleteId", "productTitle"],
-  methods: {
-    closeModal() {
-      this.$emit("close-modal", 'deleteModal')
-    },
-    deleteData(id) {
-      this.$emit("delete-data", id)
-    }
-  },
-  mounted() {
-    const modal = document.querySelector(".deleteModal");
-    deleteModal = new bootstrap.Modal(modal);
-  },
-  template: `<div class="modal fade deleteModal" id="exampleModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="exampleModalLabel">刪除確認</h5>
-        <button type="button" class="btn-close btn-close-white" @click="closeModal('deleteModal')"></button>
-      </div>
-      <div class="modal-body">
-        <p class="my-2">確定要刪除{{productTitle}}？</p>
-        <p class="my-2">商品刪除後將無法復原！</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" @click="closeModal('deleteModal')">取消</button>
-        <button type="button" class="btn btn-danger" @click="deleteData(deleteId)">刪除</button>
-      </div>
-    </div>
-  </div>
-</div>`
-}
+import productModalArea from "../components/productModalArea.js";
+import deleteModalArea from "../components/deleteModalArea.js";
 const app = {
   data() {
     return {
-      url: "https://vue3-course-api.hexschool.io/",
-      path: "jun0527",
       products: [],
       page: "",
       constraints: {
@@ -236,7 +92,7 @@ const app = {
   },
   methods: {
     init(page = 1) {
-      axios.get(`${this.url}api/${this.path}/admin/products?page=${page}`)
+      axios.get(`${url}api/${path}/admin/products?page=${page}`)
         .then((res) => {
           if (res.data.success) {
             this.products = res.data.products;
@@ -262,18 +118,16 @@ const app = {
         this.id.deleteId = id;
       }
       if (status === "deleteData") {
-        deleteModal.show();
+        this.$refs.deleteModalArea.openModal();
         this.deleteProductTitle = this.products[index].title;
       } else {
-        addProductModal.show();
+        this.$refs.productModalArea.openModal();
       }
     },
     closeModal(modal) {
       this.clearArrayData("tempData");
-      if (modal === "addProductModal") {
-        addProductModal.hide();
-      } else {
-        deleteModal.hide();
+      this.clearArrayData("prompt");
+      if (modal === "deleteModal") {
         this.deleteProductTitle = "";
       }
     },
@@ -283,7 +137,7 @@ const app = {
     uploadImage(file) {
       let formData = new FormData();
       formData.append("file-to-upload", file)
-      axios.post(`${this.url}api/${this.path}/admin/upload`, formData)
+      axios.post(`${url}api/${path}/admin/upload`, formData)
         .then((res) => {
           if (res.data.success) {
             this.tempData.imageUrl = res.data.imageUrl;
@@ -326,11 +180,11 @@ const app = {
       let obj = {
         data: { ...this.tempData }
       }
-      axios.post(`${this.url}api/${this.path}/admin/product`, obj)
+      axios.post(`${url}api/${path}/admin/product`, obj)
         .then((res) => {
           if (res.data.success) {
             alert("商品建立成功！");
-            this.closeModal('addProductModal');
+            this.$refs.productModalArea.closeModal();
             this.init();
           } else {
             alert("商品建立失敗！");
@@ -344,11 +198,11 @@ const app = {
       let obj = {
         data: { ...this.tempData }
       }
-      axios.put(`${this.url}api/${this.path}/admin/product/${id}`, obj)
+      axios.put(`${url}api/${path}/admin/product/${id}`, obj)
         .then((res) => {
           if (res.data.success) {
             alert("修改商品資料成功！");
-            this.closeModal('addProductModal');
+            this.$refs.productModalArea.closeModal();
             this.init();
           } else {
             alert("修改商品資料失敗！");
@@ -382,7 +236,7 @@ const app = {
         obj.data.is_enabled = 0;
         this.isChecked = "disabled";
       }
-      axios.put(`${this.url}api/${this.path}/admin/product/${id}`, obj)
+      axios.put(`${url}api/${path}/admin/product/${id}`, obj)
         .then((res) => {
           if (res.data.success) {
             alert("已更改商品啟用狀態！");
@@ -396,15 +250,15 @@ const app = {
         })
     },
     deleteProduct(id) {
-      axios.delete(`${this.url}api/${this.path}/admin/product/${id}`)
+      axios.delete(`${url}api/${path}/admin/product/${id}`)
         .then((res) => {
           if (res.data.success) {
             alert("產品刪除成功！");
-            deleteModal.hide();
+            this.$refs.deleteModalArea.closeModal();
             this.init();
           } else {
             alert("產品刪除失敗！");
-            deleteModal.hide();
+            this.$refs.deleteModalArea.closeModal();
           }
         })
         .catch((err) => {
