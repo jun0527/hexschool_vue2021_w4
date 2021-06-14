@@ -2,7 +2,6 @@ export default {
   props: ["page"],
   methods: {
     changePage(page) {
-      console.log("changePage", typeof page);
       this.$emit("emit-init", page);
     }
   },

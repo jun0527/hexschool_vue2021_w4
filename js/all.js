@@ -1,6 +1,6 @@
 const url = "https://vue3-course-api.hexschool.io/";
 const path = "jun0527";
-import pagination from "./pagination.js";
+import pagination from "../components/pagination.js";
 import productModalArea from "../components/productModalArea.js";
 import deleteModalArea from "../components/deleteModalArea.js";
 const app = {
